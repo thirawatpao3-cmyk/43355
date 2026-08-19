@@ -1,0 +1,82 @@
+-- สร้าง UI หน้าต่างเปลี่ยนเพลง Tool
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- ป้องกันซ้ำ ลบอันเก่าทิ้งก่อนถ้ามี
+if playerGui:FindFirstChild("ToolMusicUI") then
+    playerGui.ToolMusicUI:Destroy()
+end
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ToolMusicUI"
+screenGui.Parent = playerGui
+
+-- กรอบหลัก (Main Frame)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 260, 0, 160)
+frame.Position = UDim2.new(0.5, -130, 0.4, -80)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true -- ทำให้ลากขยับหน้าจอได้
+frame.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = frame
+
+-- หัวข้อ
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundTransparency = 1
+title.Text = "🎵 ระบบเพลง Tool"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 16
+title.Font = Enum.Font.GothamBold
+title.Parent = frame
+
+-- ช่องใส่ ID เพลง (TextBox - ใส่ ID เริ่มต้นให้แล้ว)
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(0, 220, 0, 35)
+textBox.Position = UDim2.new(0.5, -110, 0, 50)
+textBox.PlaceholderText = "ใส่ ID เพลงที่นี่..."
+textBox.Text = "136928868616177" -- ID เพลงเริ่มต้น
+textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+textBox.TextSize = 14
+textBox.Font = Enum.Font.Gotham
+textBox.Parent = frame
+
+local boxCorner = Instance.new("UICorner")
+boxCorner.CornerRadius = UDim.new(0, 6)
+boxCorner.Parent = textBox
+
+-- ปุ่มกดเปิดเพลง (Button)
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 220, 0, 35)
+button.Position = UDim2.new(0.5, -110, 0, 95)
+button.Text = "🎶 เปิดเพลงใน Tool"
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.BackgroundColor3 = Color3.fromRGB(52, 152, 219)
+button.TextSize = 14
+button.Font = Enum.Font.GothamBold
+button.Parent = frame
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 6)
+btnCorner.Parent = button
+
+-- ระบบสั่งการเมื่อกดปุ่ม
+button.MouseButton1Click:Connect(function()
+    local songId = textBox.Text
+    if songId ~= "" then
+        local args = {
+            "ToolMusicText",
+            songId,
+            [4] = true
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("RE"):WaitForChild("PlayerToolEvent"):FireServer(unpack(args))
+    else
+        textBox.PlaceholderText = "โปรดใส่ ID เพลงก่อน!"
+    end
+end)
